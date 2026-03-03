@@ -1,146 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cashout Calculation</title>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        padding: 20px;
-    }
-
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .table {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        max-width: 900px;
-        margin: auto;
-    }
-
-    .cell {
-        background: #fff;
-        padding: 12px;
-        text-align: center;
-        border-radius: 6px;
-        border: 1px solid #ddd;
-    }
-
-    .header {
-        font-weight: bold;
-        background: #222;
-        color: #fff;
-    }
-
-    input {
-        width: 90%;
-        padding: 8px;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    .buttons {
-        max-width: 900px;
-        margin: 20px auto;
-        display: flex;
-        gap: 15px;
-    }
-
-    button {
-        flex: 1;
-        padding: 14px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        border-radius: 6px;
-        color: #fff;
-    }
-
-    .regular {
-        background: #007bff;
-    }
-
-    .vip {
-        background: #28a745;
-    }
-
-    @media (max-width: 600px) {
-        .table {
-            grid-template-columns: 1fr;
+    <title>Cashout Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;   /* Light background */
+            color: #222;
+            text-align: center;
+            padding: 40px;
         }
-    }
-</style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            font-size: 18px;
+        }
+        th {
+            background: #e6e6e6;
+            color: #000;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            width: 120px;
+        }
+    </style>
 </head>
-
 <body>
 
-<h2>Cashout Calculation</h2>
+<h2>Cashout Calculator</h2>
 
-<div class="table">
-    <div class="cell header">$ Sent to Us</div>
-    <div class="cell header">Deposited on Game</div>
-    <div class="cell header">Minimum</div>
-    <div class="cell header">Maximum</div>
-
-    <div class="cell">
-        <input type="number" id="sent" placeholder="Enter $ sent">
-    </div>
-    <div class="cell">
-        <input type="number" id="deposited" placeholder="Enter deposited">
-    </div>
-    <div class="cell" id="minimum">—</div>
-    <div class="cell" id="maximum">—</div>
-</div>
-
-<div class="buttons">
-    <!--
-    <button class="regular" onclick="calculateRegular()">Regular</button>
-    -->
-    <button class="vip" onclick="calculateVIP()">CALCULATE</button>
-</div>
+<table>
+    <tr>
+        <th>$ Sent To Us</th>
+        <th>Deposited On Game</th>
+        <th>Minimum</th>
+        <th>Maximum</th>
+    </tr>
+    <tr>
+        <td><input type="number" id="sent" oninput="calculate()"></td>
+        <td><input type="number" id="deposited" oninput="calculate()"></td>
+        <td id="minimum">$0.00</td>
+        <td id="maximum">$0.00</td>
+    </tr>
+</table>
 
 <script>
-function calculateMaximum(sent) {
-    if (sent >= 0 && sent <= 20) {
-        return sent * 10;
-    } else if (sent >= 21 && sent <= 50) {
-        return 750;
-    } else if (sent >= 51 && sent <= 100) {
-        return 1500;
-    } else if (sent > 100) {
-        return 4100;
-    } else {
-        return 0;
+function calculate() {
+    let sent = parseFloat(document.getElementById("sent").value) || 0;
+    let deposited = parseFloat(document.getElementById("deposited").value) || 0;
+
+    // Minimum Calculation
+    let minValue = deposited * 3;
+    if (minValue < 70) {
+        minValue = 70;
     }
-}
 
-function calculateRegular() {
-    const sent = Number(document.getElementById("sent").value);
-    const deposited = Number(document.getElementById("deposited").value);
+    // Maximum Calculation
+    let maxValue = 0;
+    if (sent >= 0 && sent <= 49.99) {
+        maxValue = sent * 10;
+    } else if (sent >= 50 && sent <= 99.99) {
+        maxValue = sent * 15;
+    } else if (sent >= 100) {
+        maxValue = 4000;
+    }
 
-    const minValue = deposited * 4 < 65 ? 65 : deposited * 4;
-    const maxValue = calculateMaximum(sent);
-
-    document.getElementById("minimum").innerText = "$" + minValue;
-    document.getElementById("maximum").innerText = "$" + maxValue;
-}
-
-function calculateVIP() {
-    const sent = Number(document.getElementById("sent").value);
-    const deposited = Number(document.getElementById("deposited").value);
-
-    const minValue = deposited * 3 < 65 ? 65 : deposited * 3;
-    const maxValue = calculateMaximum(sent);
-
-    document.getElementById("minimum").innerText = "$" + minValue;
-    document.getElementById("maximum").innerText = "$" + maxValue;
+    document.getElementById("minimum").innerText = "$" + minValue.toFixed(2);
+    document.getElementById("maximum").innerText = "$" + maxValue.toFixed(2);
 }
 </script>
 
